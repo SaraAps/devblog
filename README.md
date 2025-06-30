@@ -42,13 +42,13 @@ It allows users to create posts, add tags, and comment, all organized in a clean
 1. Clone the repo:  
    ```bash
    git clone https://github.com/SaraAps/devblog.git
-   cd devblog```
+   cd devblog
 2. Run backend and frontend separately:
    ```cd backend
       npm install
-      node server.js```
+      node server.js
 
-   ```cd backend
+      cd frontend
       npm install
-      npm run dev```
+      npm run dev
 3. Make sure your MongoDB is running and configured in backend .env
