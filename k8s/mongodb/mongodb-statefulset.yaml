@@ -4,7 +4,7 @@ metadata:
   name: mongodb
   namespace: devblog
 spec:
-  serviceName: mongodb
+  serviceName: mongodb-service
   replicas: 1
   selector:
     matchLabels:
@@ -14,41 +14,42 @@ spec:
       labels:
         app: mongodb
     spec:
-      securityContext:
-        fsGroup: 999
       containers:
-        - name: mongodb
-          image: mongo:6.0
-          ports:
-            - containerPort: 27017
-          env:
-            - name: MONGO_INITDB_ROOT_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: mongodb-secret
-                  key: root-username
-            - name: MONGO_INITDB_ROOT_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: mongodb-secret
-                  key: root-password
-            - name: MONGO_INITDB_DATABASE
-              value: "blogdb"
-          volumeMounts:
-            - name: mongodb-persistent-storage
-              mountPath: /data/db
-          resources:
-            limits:
-              memory: "512Mi"
-            requests:
-              cpu: "100m"
-              memory: "256Mi"
-  volumeClaimTemplates:
-    - metadata:
-        name: mongodb-persistent-storage
-      spec:
-        accessModes: ["ReadWriteOnce"]
-        storageClassName: "standard"
+      - name: mongodb
+        image: mongo:6.0
+        ports:
+        - containerPort: 27017
+        env:
+        - name: MONGO_INITDB_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              name: mongodb-config
+              key: MONGO_INITDB_DATABASE
+        - name: MONGO_INITDB_ROOT_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-secret
+              key: MONGO_INITDB_ROOT_USERNAME
+        - name: MONGO_INITDB_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-secret
+              key: MONGO_INITDB_ROOT_PASSWORD
+        volumeMounts:
+        - name: mongodb-storage
+          mountPath: /data/db
         resources:
           requests:
-            storage: 1Gi
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+  volumeClaimTemplates:
+  - metadata:
+      name: mongodb-storage
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 1Gi

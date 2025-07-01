@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend-config
+  namespace: devblog
+data:
+  # For Kubernetes internal communication, use service name and port
+  VITE_API_BASE_URL: "http://backend-service:5000/api"
